@@ -1,4 +1,5 @@
 # Discriminator
+import tensorflow as tf
 
 class Discriminator:
     #nWidth = 512
