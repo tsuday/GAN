@@ -32,7 +32,7 @@ class Generator:
     def L2(output, target):
         return tf.reduce_sum(tf.square(target-output))
     
-    def __init__(self, training_csv_file_name, **options):
+    def __init__(self, training_csv_file_name, options):
         # options by argument
         self.batch_size = options.get('batch_size', 1)
         self.is_data_augmentation = options.get('is_data_augmentation', True)

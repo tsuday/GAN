@@ -27,23 +27,10 @@ def draw_image(image_list, caption_list, batch_size, width, height):
             # image_list[j] is each images with 4-D(first dimension is batch_size)
             subplot.imshow(image_list[j][i], vmin=0, vmax=255, cmap=plt.cm.gray, interpolation="nearest")
 
-# Prepare network with generator and discriminator
-with tf.Graph().as_default(): # both of generator and discriminator belongs to the same graph
-    generator = Generator('dataList.csv', batch_size=8)
-    discriminator = Discriminator(generator.x_image, generator.output, generator.t_compare)
-
-    def generator_loss_function(output, target):
-        eps = 1e-7
-        loss_L1 = tf.reduce_mean(tf.abs(target-output))
-        loss_discriminator = tf.reduce_mean(-tf.log(discriminator.layer_generator_output + eps))
-
-        ratio_discriminator = 0.01
-        return (1.00 - ratio_discriminator) * loss_L1 + ratio_discriminator * loss_discriminator
-
-    generator.loss_function = generator_loss_function
-    
-    generator.sess.run(tf.global_variables_initializer())
-
+# Prepare network for GAN
+gan = GAN('dataList.csv', batch_size=8)
+generator = gan.generator
+discriminator = gan.discriminator
 
 coord = tf.train.Coordinator()
 threads = tf.train.start_queue_runners(coord=coord, sess=generator.sess)

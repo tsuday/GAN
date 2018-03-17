@@ -10,7 +10,7 @@ class Discriminator:
     # input_image : input for GAN (also input for generator)
     # generator_output : generated image by generator
     # target_image : expected image, which is input for GAN
-    def __init__(self, input_image, generator_output, target_image, **options):
+    def __init__(self, input_image, generator_output, target_image, options):
         self.input_image = input_image
         self.generator_output = generator_output 
         self.target_image = target_image
