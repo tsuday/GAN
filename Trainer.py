@@ -27,9 +27,9 @@ def draw_image(image_list, caption_list, batch_size, width, height):
             # image_list[j] is each images with 4-D(first dimension is batch_size)
             subplot.imshow(image_list[j][i], vmin=0, vmax=255, cmap=plt.cm.gray, interpolation="nearest")
 
-# Use AutoEncoder class as generator
+# Prepare network with generator and discriminator
 with tf.Graph().as_default(): # both of generator and discriminator belongs to the same graph
-    generator = AutoEncoder('dataList.csv', batch_size=8)
+    generator = Generator('dataList.csv', batch_size=8)
     discriminator = Discriminator(generator.x_image, generator.output, generator.t_compare)
 
     def generator_loss_function(output, target):
@@ -45,26 +45,24 @@ with tf.Graph().as_default(): # both of generator and discriminator belongs to t
     generator.sess.run(tf.global_variables_initializer())
 
 
-#ae = AutoEncoder('dataList.csv', batch_size=4, is_skip_connection=True, is_data_augmentation=False, loss_function=AutoEncoder.L2)
-
 coord = tf.train.Coordinator()
 threads = tf.train.start_queue_runners(coord=coord, sess=generator.sess)
 scaler = MinMaxScaler(feature_range=(0,1))
 
 # If you want to resume learning, please set start step number larger than 0
-start = 0 #17200 #51600
+start = 0
 # loop counter
 i = start
 
 # number of loops to report loss value while learning
-n_report_loss_loop = 100#4# 200
+n_report_loss_loop = 100 #4
 
 # number of loops to report predicted image while learning
 # this must be multiple number of n_report_loss_loop
-n_report_image_loop = 400#20# 1000
+n_report_image_loop = 300 #20
 
 # number of all loops for learning
-n_all_loop = 2000000#42 #2000000
+n_all_loop = 2000000 #42
 
 
 print("Start Training loop")
@@ -79,9 +77,9 @@ with generator.sess as sess:
             i += 1
             # Run training steps or whatever
             image_data, depth_data = generator.sess.run([generator.image_batch, generator.depth_batch])
-            image_data = image_data.reshape((generator.batch_size, AutoEncoder.nPixels))
+            image_data = image_data.reshape((generator.batch_size, Generator.nPixels))
             #image_data = scaler.fit_transform(image_data)
-            depth_data = depth_data.reshape((generator.batch_size, AutoEncoder.nPixels))
+            depth_data = depth_data.reshape((generator.batch_size, Generator.nPixels))
             
             generator.sess.run([generator.train_step], feed_dict={generator.x:image_data, generator.t:depth_data, generator.keep_prob:0.5})
             if i == n_all_loop:
