@@ -46,11 +46,6 @@ class Generator:
             print("data_augmentation : {0}".format(self.is_data_augmentation))
             print("skip_connection : {0}".format(self.is_skip_connection))
             print("loss_function : {0}".format(self.loss_function))
-        
-        #with tf.Graph().as_default():
-        #    self.prepare_model()
-        #    self.prepare_session()
-        #    self.prepare_batch(training_csv_file_name)
 
         self.prepare_model()
         self.prepare_session()

@@ -2,8 +2,6 @@
 import tensorflow as tf
 
 class Discriminator:
-    #nWidth = 512
-    #nHeight = 512
     
     # input_image, generator_output and target_image have 4 dimensions
     # (batch_size, image_width, image_height, color_channel)
@@ -18,16 +16,6 @@ class Discriminator:
         self.layer_generator_output = self.prepare_model(generator_output, "discriminator_for_generator_output")
         self.layer_target_image = self.prepare_model(target_image, "discriminator_for_target_image")
         self.loss = self.calc_loss()
-        ## TODO:this may be necessary
-        ##self.prepare_session()
-
-        #with tf.Graph().as_default():
-        #with tf.get_default_graph():
-        #    self.layer_generator_output = self.prepare_model(generator_output, "discriminator_for_generator_output")
-        #    self.layer_target_image = self.prepare_model(target_image, "discriminator_for_target_image")
-        #    self.loss = self.cals_loss()
-            # TODO:this may be necessary
-            #self.prepare_session()
 
     # discriminate_target is generator_output or target_image
     # this method returns last layer 
