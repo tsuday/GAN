@@ -33,7 +33,7 @@ generator = gan.generator
 discriminator = gan.discriminator
 
 coord = tf.train.Coordinator()
-threads = tf.train.start_queue_runners(coord=coord, sess=generator.sess)
+threads = tf.train.start_queue_runners(coord=coord, sess=gan.sess)
 scaler = MinMaxScaler(feature_range=(0,1))
 
 # If you want to resume learning, please set start step number larger than 0
@@ -53,47 +53,46 @@ n_all_loop = 2000000 #42
 
 
 print("Start Training loop")
-with generator.sess as sess:
+with gan.sess as sess:
     
     if start > 0:
         print("Resume from session files")
-        generator.saver.restore(sess, "./saved_session/s-" +str(start))
+        gan.saver.restore(sess, "./saved_session/s-" +str(start))
     
     try:
         while not coord.should_stop():
             i += 1
             # Run training steps or whatever
-            image_data, depth_data = generator.sess.run([generator.image_batch, generator.depth_batch])
+            image_data, depth_data = gan.sess.run([generator.image_batch, generator.depth_batch])
             image_data = image_data.reshape((generator.batch_size, Generator.nPixels))
             #image_data = scaler.fit_transform(image_data)
             depth_data = depth_data.reshape((generator.batch_size, Generator.nPixels))
             
-            generator.sess.run([generator.train_step], feed_dict={generator.x:image_data, generator.t:depth_data, generator.keep_prob:0.5})
+            gan.sess.run([generator.train_step], feed_dict={generator.x:image_data, generator.t:depth_data, generator.keep_prob:0.5})
             if i == n_all_loop:
                 coord.request_stop()
 
             #TODO:Split data into groups for cross-validation
             if i==start+1 or i % n_report_loss_loop == 0:
                 loss_vals = []
-                loss_val, t_cmp, out, summary, x_input, discriminator_loss = generator.sess.run([generator.loss, generator.t_compare, generator.output, generator.summary, generator.x_image, discriminator.loss],
+                loss_val, t_cmp, out, summary, x_input, discriminator_loss = gan.sess.run([generator.loss, generator.t_compare, generator.output, gan.summary, generator.x_image, discriminator.loss],
                                                             feed_dict={generator.x:image_data, generator.t:depth_data, generator.keep_prob:1.0})
                 loss_vals.append(loss_val)
                 loss_val = np.sum(loss_vals)
 
-                # TODO: save for discriminator
-                generator.saver.save(generator.sess, './saved_session/s', global_step=i)
+                gan.saver.save(gan.sess, './saved_session/s', global_step=i)
                 
                 print ('Step: %d, Loss: %f @ %s' % (i, loss_val, datetime.now().strftime("%Y/%m/%d %H:%M:%S")))
                 if i==start+1 or i % n_report_image_loop == 0:
                     x_input = tf.reshape(x_input, [generator.batch_size, generator.outputWidth, generator.outputHeight])
                     t_cmp = tf.reshape(t_cmp, [generator.batch_size, generator.outputWidth, generator.outputHeight])
                     out = tf.reshape(out, [generator.batch_size, generator.outputWidth, generator.outputHeight])
-                    draw_image([x_input.eval(session=generator.sess), out.eval(session=generator.sess), t_cmp.eval(session=generator.sess)],
+                    draw_image([x_input.eval(session=gan.sess), out.eval(session=gan.sess), t_cmp.eval(session=gan.sess)],
                                ["Input Image", "Predicted Result", "Ground Truth"],
                                generator.batch_size, generator.outputWidth, generator.outputHeight)
                     
                     # TODO:write for discriminator
-                    generator.writer.add_summary(summary, i)
+                    gan.writer.add_summary(summary, i)
 
     except tf.errors.OutOfRangeError as e:
         print('Done training')
@@ -110,6 +109,6 @@ with generator.sess as sess:
     coord.request_stop()
     coord.join(threads)
 
-generator.sess.close()
+gan.sess.close()
 
 print("end")

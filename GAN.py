@@ -51,7 +51,6 @@ class Generator:
             print("loss_function : {0}".format(self.loss_function))
 
         self.prepare_model()
-        self.prepare_session()
         self.prepare_batch(training_csv_file_name)
 
     def prepare_model(self):
@@ -244,19 +243,6 @@ class Generator:
         self.t_compare = t_compare
         self.loss = loss
         
-    def prepare_session(self):
-        sess = tf.Session()
-        # TODO
-        #sess.run(tf.global_variables_initializer())
-        saver = tf.train.Saver()
-        summary = tf.summary.merge_all()
-        writer = tf.summary.FileWriter("board/learn_logs", sess.graph)
-        
-        self.sess = sess
-        self.saver = saver
-        self.summary = summary
-        self.writer = writer
-
     # https://www.tensorflow.org/versions/r0.12/how_tos/reading_data/index.html#batching
     def read_my_file_format(self, filename_queue):
         reader = tf.TextLineReader()
@@ -413,6 +399,8 @@ class GAN:
         with tf.Graph().as_default(): # both of generator and discriminator belongs to the same graph
             print(training_csv_file_name)
             print(options)
+            
+            # Construct generator and discriminator
             generator = Generator(training_csv_file_name, options)
             discriminator = Discriminator(generator.x_image, generator.output, generator.t_compare, options)
 
@@ -425,7 +413,25 @@ class GAN:
                 return (1.00 - ratio_discriminator) * loss_L1 + ratio_discriminator * loss_discriminator
 
             generator.loss_function = generator_loss_function
-            generator.sess.run(tf.global_variables_initializer())
             
             self.generator = generator
             self.discriminator = discriminator
+            
+            self.prepare_session()
+
+            self.sess.run(tf.global_variables_initializer())
+
+
+    def prepare_session(self):
+        sess = tf.Session()
+        # TODO
+        #sess.run(tf.global_variables_initializer())
+        saver = tf.train.Saver()
+        summary = tf.summary.merge_all()
+        writer = tf.summary.FileWriter("board/learn_logs", sess.graph)
+        
+        self.sess = sess
+        self.saver = saver
+        self.summary = summary
+        self.writer = writer
+
