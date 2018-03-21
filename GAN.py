@@ -230,7 +230,7 @@ class Generator:
             ## Apply loss function (difference between training data and predicted data), and learning algorithm.
             t_compare = t_image
             loss = self.loss_function(output, t_compare)
-            train_step = tf.train.AdamOptimizer(0.0005).minimize(loss)
+            train_step = tf.train.AdamOptimizer(0.0005, 0.5).minimize(loss)
 
         tf.summary.scalar("loss", loss)
         #tf.histogram_summary("Convolution_1:biases", b_conv1)
