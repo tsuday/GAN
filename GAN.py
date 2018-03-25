@@ -35,7 +35,7 @@ class Generator:
     def L2(output, target):
         return tf.reduce_sum(tf.square(target-output))
     
-    def __init__(self, training_csv_file_name, options):
+    def __init__(self, training_csv_file_name, **options):
         # options by argument
         self.batch_size = options.get('batch_size', 1)
         self.is_data_augmentation = options.get('is_data_augmentation', True)
@@ -287,7 +287,7 @@ class Discriminator:
     # input_image : input for GAN (also input for generator)
     # generator_output : generated image by generator
     # target_image : expected image, which is input for GAN
-    def __init__(self, input_image, generator_output, target_image, options):
+    def __init__(self, input_image, generator_output, target_image, **options):
         self.input_image = input_image
         self.generator_output = generator_output 
         self.target_image = target_image
@@ -401,8 +401,8 @@ class GAN:
             print(options)
             
             # Construct generator and discriminator
-            generator = Generator(training_csv_file_name, options)
-            discriminator = Discriminator(generator.x_image, generator.output, generator.t_compare, options)
+            generator = Generator(training_csv_file_name, batch_size=self.batch_size, is_data_augmentation=self.is_data_augmentation, is_skip_connection=self.is_skip_connection, loss_function=self.loss_function)
+            discriminator = Discriminator(generator.x_image, generator.output, generator.t_compare, batch_size=self.batch_size, is_data_augmentation=self.is_data_augmentation, is_skip_connection=self.is_skip_connection, loss_function=self.loss_function)
 
             def generator_loss_function(output, target):
                 eps = 1e-7
