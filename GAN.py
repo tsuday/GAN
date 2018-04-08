@@ -332,14 +332,14 @@ class Discriminator:
                 return conved
            
             num_channels = 1
-            out_channels_base = 32
+            out_channels_base = 64
             # list consists of elements(out_channels, stride)
             layer_spec = [
-                (64,   2), # disc_layer_1: [batch_size, 512, 512, 1]  => [batch_size, 256, 256, 64]
-                (128,  2), # disc_layer_2: [batch_size, 256, 256, 64] => [batch_size, 128, 128, 128]
-                (256,  2), # disc_layer_3: [batch_size, 128, 128, 128] => [batch_size, 64, 64, 256]
-                (512,  2), # disc_layer_4: [batch_size, 64, 64, 256] => [batch_size, 32, 32, 512]
-                (1024, 1), # disc_layer_5: [batch_size, 32, 32, 512] => [batch_size, 31, 31, 1024]
+                (out_channels_base   , 2), # disc_layer_1: [batch_size, 512, 512, 1]  => [batch_size, 256, 256, 64]
+                (out_channels_base*2 , 2), # disc_layer_2: [batch_size, 256, 256, 64] => [batch_size, 128, 128, 128]
+                (out_channels_base*4 , 2), # disc_layer_3: [batch_size, 128, 128, 128] => [batch_size, 64, 64, 256]
+                (out_channels_base*8 , 2), # disc_layer_4: [batch_size, 64, 64, 256] => [batch_size, 32, 32, 512]
+                (out_channels_base*16, 1), # disc_layer_5: [batch_size, 32, 32, 512] => [batch_size, 31, 31, 1024]
             ]
 
             # discriminator layers
@@ -424,8 +424,6 @@ class GAN:
 
     def prepare_session(self):
         sess = tf.Session()
-        # TODO
-        #sess.run(tf.global_variables_initializer())
         saver = tf.train.Saver()
         summary = tf.summary.merge_all()
         writer = tf.summary.FileWriter("board/learn_logs", sess.graph)
