@@ -72,7 +72,6 @@ with gan.sess as sess:
             if i == n_all_loop:
                 coord.request_stop()
 
-            #TODO:Split data into groups for cross-validation
             if i==start+1 or i % n_report_loss_loop == 0:
                 loss_vals = []
                 loss_val, t_cmp, out, summary, x_input, discriminator_loss = gan.sess.run([generator.loss, generator.t_compare, generator.output, gan.summary, generator.x_image, discriminator.loss],
@@ -91,7 +90,6 @@ with gan.sess as sess:
                                ["Input Image", "Predicted Result", "Ground Truth"],
                                generator.batch_size, generator.outputWidth, generator.outputHeight)
                     
-                    # TODO:write for discriminator
                     gan.writer.add_summary(summary, i)
 
     except tf.errors.OutOfRangeError as e:
