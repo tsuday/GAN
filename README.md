@@ -11,7 +11,7 @@ This project consists of three programs.
 * _Trainer.py_  
     Sample program to run training. It requires training data images, and will be described below for details.
 
-* _Predictor.py_
+* _Predictor.py_  
     Sample program to predict by using trained data. It requires trained parameter data and input image for prediction. This will also be described below.
 
 ## GAN.py
@@ -61,7 +61,7 @@ This consists of 3parts:
 * Loss value, which is sequare sum of pixel value differences between predicted values by generator and expected values
 * Timestamp when the progress is output  
 
-Default implementation of running parts write progress at the first step and every 200 steps after the first step.
+Default implementation of running training parts (Trainer.py) write progress at the first step and every 200 steps after the first step.
 
 #### Images predicted
 _TODO:to be written_
@@ -73,12 +73,11 @@ You can see _Tensor Board_ by _Tensorflow_'s usual way to invoke it.
 _TODO:to be written for more details._
 
 #### Session file to resume learning
-_Trainer.py_ saves files of session files, which includes trained parameters at the saving step.  
+_Trainer.py_ saves session files while training. Session files include trained parameters at the saving step.  
 These files are saved in _saved_session_ directory.
 
-_Trainer.py_ can load them to resume training from saved step.  
-
-_TODO: Implement prediction program _Predictor.py_ , and write about it.  
+_Trainer.py_ can load session files to resume training from saved step.  
+_Predictor.py_ can load session files and predict image from input with loaded parameters.  
 
 ## Trainer.py
 Sample implementation of training by using GAN.py.
@@ -95,7 +94,7 @@ _TODO: Write technical details on it.
 
 
 ## How to execute
-1. Please run _GAN.py_, and class definitions are loaded.<br>
+1. Please run _GAN.py_, and class definitions are loaded.
 2. Please run _Trainer.py_. This program load training data and output session data of Tensorflow for every 200 training steps.
 3. Please modify settings in _Predictor.py_, and run. This program load session data and output predicted image by matplotlib.
 
